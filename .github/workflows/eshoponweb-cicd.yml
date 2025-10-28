@@ -7,9 +7,9 @@ on: [push, workflow_dispatch]
 env:
   RESOURCE-GROUP: as-rg
   LOCATION: westeurope
-  TEMPLATE-FILE: infra/webapp.bicep
+  #TEMPLATE-FILE: infra/webapp.bicep
   SUBSCRIPTION-ID: 690cfbfc-a1ad-456d-94d2-3813e0714be4
-  WEBAPP-NAME: eshoponwebwebapp28oct251
+  WEBAPP-NAME: eshoponwebgk28oct
 
 
 jobs:
@@ -43,11 +43,11 @@ jobs:
         path: ${{env.DOTNET_ROOT}}/app.zip
         
     # upload the bicep template as artifacts for next job
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: bicep-template
-        path: ${{ env.TEMPLATE-FILE }}
+    #- name: Upload artifact for deployment job
+     # uses: actions/upload-artifact@v4
+      #with:
+       # name: bicep-template
+        #path: ${{ env.TEMPLATE-FILE }}
         
   # Use Bicep to deploy infrastructure + Publish webapp 
   deploy:
@@ -65,11 +65,11 @@ jobs:
         path: .net-app
   
     #Download the bicep templates from previous job
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: bicep-template
-        path: bicep-template
+    #- name: Download artifact from build job
+      #uses: actions/download-artifact@v4
+      #with:
+        #name: bicep-template
+        #path: bicep-template
         
    #Login in your azure subscription using a service principal (credentials stored as GitHub Secret in repo)
     - name: Azure Login
@@ -78,14 +78,14 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
            
     # Deploy Azure WebApp using Bicep file
-    - name: deploy
-      uses: azure/arm-deploy@v2
-      with:
-        subscriptionId: ${{ env.SUBSCRIPTION-ID }}
-        resourceGroupName: ${{ env.RESOURCE-GROUP }}
-        template: bicep-template/webapp.bicep
-        parameters: 'webAppName=${{ env.WEBAPP-NAME }} location=${{ env.LOCATION }}'
-        failOnStdErr: false   
+  #  - name: deploy
+    #  uses: azure/arm-deploy@v2
+     # with:
+       # subscriptionId: ${{ env.SUBSCRIPTION-ID }}
+        #resourceGroupName: ${{ env.RESOURCE-GROUP }}
+        #template: bicep-template/webapp.bicep
+        #parameters: 'webAppName=${{ env.WEBAPP-NAME }} location=${{ env.LOCATION }}'
+        #failOnStdErr: false   
     
     # Publish website to Azure App Service (WebApp)
     # Step disabled due to issue where the site sometimes can't be found: https://github.com/microsoft/pipelines-appservice-lib/issues/56. Instead deploy using CLI
